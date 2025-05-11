@@ -41,7 +41,17 @@ jobs:
       id: account
       run: |
         echo "ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)" >> $GITHUB_ENV
+    - name: Checkout repo
+      uses: actions/checkout@v2
 
+    - name: Run Prisma Cloud 
+      id: prisma-cloud
+      uses: bridgecrewio/checkov-action@master
+      env:
+        PRISMA_API_URL: https://api.fr.prismacloud.io
+      with:
+        api-key: ${{ secrets.BC_API_KEY }}
+        
     - name: Check previous AWSGoat Deployment
       id: check 
       run: |
@@ -68,8 +78,7 @@ jobs:
     - name: install
       run: |
         pip install boto3
-        pip3 install checkov
-    
+        
     - name: Terraform Plan
       id: plan 
       run: | 
