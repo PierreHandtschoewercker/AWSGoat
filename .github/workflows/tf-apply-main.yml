@@ -51,6 +51,11 @@ jobs:
         PRISMA_API_URL: https://api.fr.prismacloud.io
       with:
         api-key: ${{ secrets.BC_API_KEY }}
+        directory: modules/
+        quiet: true
+        use_enforcement_rules: true
+        framework: terraform
+        
         
     - name: Check previous AWSGoat Deployment
       id: check 
@@ -108,3 +113,15 @@ jobs:
       run: |
         cd modules/${{ github.event.inputs.module }}
         terraform output
+        
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v2
+        
+        # Results are generated only on a success or failure
+        # this is required since GitHub by default won't run the next step
+        # when the previous one has failed. Security checks that do not pass will 'fail'.
+        # An alternative is to add `continue-on-error: true` to the previous step
+        # Or 'soft_fail: true' to checkov.
+      if: success() || failure()
+      with:
+        sarif_file: results.sarif
