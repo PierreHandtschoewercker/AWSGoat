@@ -68,6 +68,7 @@ jobs:
     - name: install
       run: |
         pip install boto3
+        pip3 install checkov
     
     - name: Terraform Plan
       id: plan 
